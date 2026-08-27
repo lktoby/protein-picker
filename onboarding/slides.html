@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIドリブン開発の前提思想</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ヴァル研究所 intern_guide のブランドに合わせた配色・書体 */
+    :root {
+      --brand:        #15243B;  /* ink（濃紺） */
+      --brand-light:  #0FA277;  /* after（緑・アクセント） */
+      --brand-deep:   #0A6B50;  /* after-deep */
+      --accent:       #E8922A;  /* signal（オレンジ） */
+      --accent-deep:  #A86312;
+      --ink:          #15243B;
+      --soft:         #3B4B64;
+      --muted:        #6E7B92;
+      --paper:        #F5F7F9;
+      --panel:        #EDF0F4;
+      --panel-tint:   #E4F5EE;  /* after-tint */
+      --line:         rgba(21,36,59,0.12);
+      --display:      'Outfit', 'Zen Kaku Gothic New', "Hiragino Sans", "Yu Gothic", sans-serif;
+      --body:         'Outfit', 'Zen Kaku Gothic New', "Hiragino Sans", "Yu Gothic", sans-serif;
+    }
+
+    .reveal {
+      font-family: var(--body);
+      color: var(--ink);
+      font-size: 30px;
+      font-feature-settings: "palt" 1;
+      -webkit-font-smoothing: antialiased;
+    }
+    .reveal .slides { text-align: left; }
+
+    /* 見出し */
+    .reveal h1 { font-family: var(--display); color: var(--brand); font-size: 1.7em; font-weight: 700; letter-spacing: .01em; line-height: 1.24; }
+    .reveal h2 {
+      font-family: var(--display); color: var(--brand); font-size: 1.15em; font-weight: 700;
+      border-left: 6px solid var(--brand-light);
+      padding: .1em 0 .1em .5em; margin-bottom: .7em; letter-spacing: .01em;
+    }
+    .reveal h3 { font-family: var(--display); color: var(--brand); font-size: .85em; font-weight: 700; }
+
+    .reveal strong { color: var(--brand-deep); font-weight: 700; }
+    .reveal em { color: var(--brand-light); font-style: normal; font-weight: 700; }
+
+    /* 表紙 */
+    #cover { text-align: center; }
+    #cover .lead { color: var(--soft); font-size: .62em; line-height: 1.9; margin-top: 1em; }
+    #cover .kicker {
+      font-family: var(--display);
+      display: inline-block; margin-bottom: 1.2em; padding: .3em 1.1em;
+      background: var(--brand-light); color: #fff; border-radius: 999px;
+      font-size: .5em; font-weight: 600; letter-spacing: .14em;
+    }
+    #cover .tag { color: var(--brand-deep); font-weight: 500; }
+
+    /* リスト */
+    .reveal ul { margin-left: .2em; }
+    .reveal ul li { margin: .35em 0; line-height: 1.5; }
+    .reveal ul ul li { font-size: .82em; color: var(--muted); }
+    .reveal .marker li::marker { font-size: 1em; }
+
+    /* テーブル */
+    .reveal table { font-size: .74em; border-collapse: collapse; width: 100%; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 0 var(--line); }
+    .reveal table th {
+      background: var(--brand); color: #fff; font-weight: 600; font-family: var(--display);
+      padding: .55em .7em; border: none; text-align: left;
+    }
+    .reveal table td { padding: .5em .7em; border-bottom: 1px solid var(--line); }
+    .reveal table tbody tr:nth-child(even) td, .reveal table tr:nth-child(even) td { background: #FAFBFC; }
+    .reveal table .hl td { background: var(--panel-tint); }
+    .reveal table code { background: var(--panel); color: var(--brand-deep); padding: .1em .4em; border-radius: 5px; font-size: .9em; }
+
+    /* コードチップ列 */
+    .reveal .flow {
+      display: flex; align-items: center; gap: .5em; flex-wrap: wrap;
+      font-size: .7em; font-weight: 600; font-family: var(--display); margin: .4em 0 .2em;
+    }
+    .reveal .flow .step {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 999px;
+      padding: .35em .8em; color: var(--brand);
+    }
+    .reveal .flow .step.gate { background: var(--panel-tint); border-color: #bfe6d6; color: var(--brand-deep); }
+    .reveal .flow .arrow { color: var(--accent); }
+
+    /* コールアウト */
+    .reveal .small { font-size: .62em; color: var(--muted); }
+
+    .reveal .lead-line {
+      font-size: .84em; line-height: 1.7; margin-bottom: .2em;
+    }
+    .reveal .kicker-inline { color: var(--brand-light); font-weight: 700; }
+
+    /* 図 */
+    .reveal .figure { width: 84%; margin: .2em auto 0; }
+    .reveal .figure svg { width: 100%; height: auto; display: block; }
+
+    /* 強調バッジ */
+    .badge { display:inline-block; padding:.05em .6em; border-radius:999px; font-size:.85em; font-weight:600; font-family: var(--display); }
+    .badge.human { background:#FBEDD9; color:var(--accent-deep); }
+    .badge.ai { background:var(--panel-tint); color:var(--brand-deep); }
+
+    .reveal .center-strong {
+      margin-top: .7em; text-align: center; font-size: .82em; font-weight: 700; color: var(--brand);
+    }
+
+    /* インラインコード */
+    .reveal code { font-family: 'Outfit', ui-monospace, SFMono-Regular, Menlo, monospace; }
+
+    .reveal .progress { color: var(--brand-light); }
+    .reveal .slide-number { background: transparent; color: var(--muted); }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 表紙 -->
+    <section id="cover" data-auto-animate>
+      <span class="kicker">DEVELOPMENT PHILOSOPHY</span>
+      <h1>AIドリブン開発の<br>前提思想</h1>
+      <p class="lead">
+        このリポジトリの開発フローが、なぜこの形になっているのか。<br>
+        キーワードは <span class="tag">「どこを人間が握り、どこをAIに任せるか」</span> の線引き。
+      </p>
+      <p class="small" style="margin-top:2em;">← → / Space でめくる ・ 詳細は <code>CLAUDE.md</code> と各 <code>docs/</code></p>
+    </section>
+
+    <!-- V字モデル図 -->
+    <section>
+      <h2>まず、従来の開発フロー（V字モデル）</h2>
+      <div class="figure">
+        <!-- inline SVG（外部ファイル不要で確実に表示される） -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" font-family="'Hiragino Sans','Yu Gothic',sans-serif">
+          <rect x="0" y="90"  width="1200" height="130" fill="#f3d0d0"/>
+          <rect x="0" y="220" width="1200" height="130" fill="#faeec2"/>
+          <rect x="0" y="350" width="1200" height="130" fill="#cfe4cd"/>
+          <rect x="0" y="480" width="1200" height="130" fill="#cdd8ef"/>
+          <g fill="none" stroke="#eb9b3e" stroke-width="26" stroke-linecap="round">
+            <path d="M320 175 L560 545"/>
+            <path d="M560 545 L1020 175"/>
+          </g>
+          <path d="M1000 150 l55 -20 l-8 58 z" fill="#eb9b3e"/>
+          <g font-weight="bold" font-size="21" text-anchor="middle">
+            <rect x="180" y="118" width="230" height="74" rx="12" fill="#d98a8a"/>
+            <text x="295" y="148">要求定義</text>
+            <text x="295" y="174">（ユーザーストーリー）</text>
+            <rect x="360" y="250" width="230" height="70" rx="12" fill="#eccf77"/>
+            <text x="475" y="292">要件定義</text>
+            <rect x="470" y="382" width="230" height="70" rx="12" fill="#a9cca4"/>
+            <text x="585" y="424">設計</text>
+            <rect x="470" y="512" width="230" height="70" rx="12" fill="#a9bbe4"/>
+            <text x="585" y="554">実装</text>
+            <rect x="790" y="118" width="230" height="74" rx="12" fill="#b79ac0"/>
+            <text x="905" y="162">受入テスト</text>
+            <rect x="790" y="250" width="230" height="70" rx="12" fill="#e6b483"/>
+            <text x="905" y="292">システムテスト</text>
+            <rect x="790" y="382" width="230" height="70" rx="12" fill="#8fb0bd"/>
+            <text x="905" y="424">結合テスト</text>
+            <rect x="790" y="512" width="230" height="70" rx="12" fill="#b9c6dd"/>
+            <text x="905" y="554">単体テスト</text>
+          </g>
+          <g stroke="#9a9a9a" stroke-width="1.5" stroke-dasharray="5 5">
+            <line x1="410" y1="155" x2="790" y2="155"/>
+            <line x1="590" y1="285" x2="790" y2="285"/>
+            <line x1="700" y1="417" x2="790" y2="417"/>
+            <line x1="700" y1="547" x2="790" y2="547"/>
+          </g>
+          <g font-size="18">
+            <g>
+              <rect x="20" y="20" width="300" height="70" rx="10" fill="#eeeeee" stroke="#cccccc"/>
+              <text x="38" y="48">・担当：PdM、クライアント</text>
+              <text x="38" y="74">・段階：なぜ作るか？(Why)</text>
+            </g>
+            <g>
+              <rect x="20" y="235" width="270" height="70" rx="10" fill="#eeeeee" stroke="#cccccc"/>
+              <text x="38" y="263">・担当：PjM</text>
+              <text x="38" y="289">・段階：何を作るか？(What)</text>
+            </g>
+            <g>
+              <rect x="60" y="368" width="300" height="70" rx="10" fill="#eeeeee" stroke="#cccccc"/>
+              <text x="78" y="396">・担当：開発者（リード）</text>
+              <text x="78" y="422">・段階：どう作るか？(How)</text>
+            </g>
+            <g>
+              <rect x="120" y="498" width="290" height="70" rx="10" fill="#eeeeee" stroke="#cccccc"/>
+              <text x="138" y="526">・担当：開発者</text>
+              <text x="138" y="552">・段階：実装する</text>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- 従来フローの整理 -->
+    <section>
+      <h2>従来フローの整理</h2>
+      <table>
+        <thead>
+          <tr><th>工程</th><th>問い</th><th>主な担当</th><th>対応するテスト</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>要求定義（ユーザーストーリー）</td><td>なぜ作るか (Why)</td><td>PdM・クライアント</td><td>受入テスト</td></tr>
+          <tr><td>要件定義</td><td>何を作るか (What)</td><td>PjM</td><td>システムテスト</td></tr>
+          <tr><td>設計</td><td>どう作るか (How)</td><td>開発者（リード）</td><td>結合テスト</td></tr>
+          <tr><td>実装</td><td>作る</td><td>開発者</td><td>単体テスト</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- AIが入ると -->
+    <section>
+      <h2>AIが入ると、何が変わるか</h2>
+      <p class="lead-line">AIは <em>設計も実装も高速に大量生産</em> できる。すると人間側にこういう現象が起きる。</p>
+      <ul>
+        <li class="fragment fade-in-then-semi-out">🔴 <strong>実装をレビューしていると追いつかない</strong>
+          <ul><li>コードの量とスピードに人間のレビューが間に合わない</li></ul>
+        </li>
+        <li class="fragment fade-in-then-semi-out">🔴 <strong>設計も追いつかない</strong>
+          <ul><li>設計書もAIがどんどん出す。全部を精査するのは非現実的</li></ul>
+        </li>
+        <li class="fragment">🟢 <strong>でも、要件定義は人間が握らないといけない</strong>
+          <ul><li>「何が正解か」を判断するには、要件を理解している必要がある</li></ul>
+        </li>
+      </ul>
+    </section>
+
+    <!-- なぜ要件を握るか -->
+    <section>
+      <h2>なぜ「要件」を人間が握るのか</h2>
+      <ul>
+        <li>レビューが追いつかない世界では、<strong>全部をチェックするのは諦める</strong></li>
+        <li>代わりに、<em>「何が正解か」を定義する一点</em>に人間の力を集中する</li>
+        <li>要件があいまいなままAIに丸投げすると、速く・大量に <strong>「間違ったもの」</strong> が出来上がる</li>
+        <li>だから要件定義では、<strong>ユーザーストーリーと機能一覧（何を作るか）を人間が承認</strong>しておく
+          <ul><li>「作るものの範囲」を先に固め、設計・実装の拠り所にする</li>
+          <li>「何が正しいか」の検証は、単体テスト観点を <code>/implement</code> で、受け入れテストを <code>/acceptance-test</code> で洗い出す</li></ul>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 補足 -->
+    <section>
+      <h2>補足：もっとAIに任せる世界もある</h2>
+      <ul>
+        <li>極端には、<strong>要件定義すらAIに丸投げ</strong>する進め方もありうる
+          <ul><li>人間は「要求（こうしたい）」だけ承認し、要件はAIが起こす</li></ul>
+        </li>
+        <li>ただし弊社は <em>エンジニアが主体</em> の開発をする会社
+          <ul><li>だから <strong>要件は人間が把握・承認する</strong> ところを下限にする</li></ul>
+        </li>
+        <li>「どこまで任せるか」は絶対解ではなく、<strong>組織・チーム毎に異なる</strong></li>
+      </ul>
+    </section>
+
+    <!-- 線引き -->
+    <section>
+      <h2>このリポジトリの線引き</h2>
+      <table>
+        <thead>
+          <tr><th>工程</th><th>誰が主導</th><th>人間の関与</th></tr>
+        </thead>
+        <tbody>
+          <tr class="hl"><td><strong>要求・要件定義</strong> <code>/requirements</code></td><td>人間 × AI で壁打ち</td><td><span class="badge human">✅ 承認 必須（ゲート）</span></td></tr>
+          <tr class="hl"><td><strong>デモ作成・レビュー</strong> <code>/prototype</code></td><td>AI がモックで作る</td><td><span class="badge human">✅ 関係者レビュー 必須</span></td></tr>
+          <tr><td>設計 <code>/design</code></td><td>AI が自走</td><td><span class="badge ai">任せる</span></td></tr>
+          <tr><td>実装・テスト <code>/implement</code></td><td>AI が自走</td><td><span class="badge ai">任せる</span></td></tr>
+          <tr class="hl"><td><strong>受け入れテスト</strong> <code>/acceptance-test</code></td><td>AI がシナリオ作成</td><td><span class="badge human">✅ 出荷判定は人間</span></td></tr>
+        </tbody>
+      </table>
+      <p class="center-strong">入口（要求・要件＋デモレビュー）と出口（受け入れ）を人間が握り、真ん中（設計・実装）はAIに任せる。</p>
+      <p class="small">※ <code>/prototype</code> は、設計・実装に入る前に<strong>動く画面で要件の漏れを潰す</strong>工程。ここで手戻りを吸収する。</p>
+      <p class="small">※ 簡略化のため、このリポジトリでは前段の「要求定義」と「要件定義」を分けず、<code>/requirements</code> の1つのゲートにまとめている。</p>
+    </section>
+
+    <!-- まとめ -->
+    <section data-background-color="#15243B">
+      <h2 style="color:#fff; border-left-color:#0FA277;">まとめ</h2>
+      <ul style="color:#DCE3EC;">
+        <li>AI時代は <strong style="color:#5FD3AC;">「全部レビュー」から「要点を握る」への発想転換</strong></li>
+        <li>このリポジトリの線引き：
+          <ul style="color:#AEBED2;">
+            <li><span style="color:#fff;font-weight:700;">入口（要件定義）</span> と <span style="color:#fff;font-weight:700;">出口（受け入れ判定）</span> は人間</li>
+            <li><span style="color:#fff;font-weight:700;">設計・実装</span> はAIに自走させる</li>
+          </ul>
+        </li>
+        <li>迷ったら要件に立ち返る。<strong style="color:#F4B25E;">正解を定義するのは人間</strong></li>
+      </ul>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'slide',
+    width: 1280,
+    height: 720,
+    margin: 0.06,
+    plugins: [ RevealHighlight, RevealNotes ],
+  });
+</script>
+</body>
+</html>

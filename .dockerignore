@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.gitignore
+docs
+onboarding
+README.md
+CLAUDE.md
+.env
+.env*
+!.env.example
+npm-debug.log*
+coverage
+tsconfig.tsbuildinfo
+.DS_Store

@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "arial",
+        "createdAt": "2026-08-27T06:54:19.258Z",
+        "reason": "create-next-app scaffold default in throwaway prototype; font selection deferred to design/implement phase per ui-spec"
+      }
+    ]
+  }
+}

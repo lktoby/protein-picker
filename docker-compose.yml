@@ -1,4 +1,22 @@
 services:
+  # PostgreSQL（docs/03-design/db-design.md §1-1 で追加を設計）
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    ports:
+      # ホストから `npm run db:setup`（マイグレーション・サンプルデータ投入）を実行するために公開する
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      # DB が実際に接続を受け付けられるようになるまで web を待たせる
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
   web:
     build:
       context: .
@@ -7,4 +25,13 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      # コンテナ間は db サービス名で解決する（.env の DATABASE_URL は Docker を使わない場合の予備）
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
+
+volumes:
+  db-data:

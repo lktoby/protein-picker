@@ -43,6 +43,35 @@ docker run -p 3000:3000 --env-file .env ai-flow-sample-for-intern
 
 ---
 
+## プロトタイプ（デモ）を見る
+
+`master` は**本実装**のためのブランチです。関係者レビューに使ったプロトタイプ（モックデータで動くデモ）は、
+レビュー完了時点のスナップショットとして別に保存してあります。
+
+| 保存場所 | 用途 |
+|---------|------|
+| タグ `prototype-reviewed-2026-08-28` | レビュー完了時点の状態を固定して残したもの |
+| ブランチ `archive/prototype` | 同じ内容。ブランチ一覧から見つけやすくするためのもの（**更新しません**） |
+
+デモを動かすには、どちらかをチェックアウトしてから起動します。
+
+```bash
+git checkout archive/prototype     # または git checkout prototype-reviewed-2026-08-28
+docker compose up --build
+```
+
+起動したら http://localhost:3000/prototype を開きます。
+本実装に戻るときは `git checkout master` します。
+
+- デモの見方・モックで済ませた範囲: [`docs/02-prototype/prototype-notes.md`](./docs/02-prototype/prototype-notes.md)
+- レビューの指摘と対応（RV-01〜RV-18）: [`docs/02-prototype/review-feedback.md`](./docs/02-prototype/review-feedback.md)
+- レビューで確定した UI/UX 仕様: [`docs/02-prototype/ui-spec.md`](./docs/02-prototype/ui-spec.md)
+
+> プロトタイプは**捨てる前提のコード**です。本実装に流用しませんが、合意した UI/UX（`ui-spec.md`）は後工程が踏襲します。
+> 実装前後のコードを見比べたいときは `git diff archive/prototype master -- src/` が使えます。
+
+---
+
 ## （オプション）Node.js / npm でローカル起動する
 
 Docker を使わず、ホスト環境に直接 Node.js をインストールして動かすこともできます。

@@ -1,12 +1,9 @@
-"use client";
-
 // F-04 商品情報の一気見（US-04） / F-05 実店舗情報の表示（US-08）
 // RV-02: 遷移元（おすすめ診断）に応じた戻り導線を出す
 
 import Link from "next/link";
-import { Suspense } from "react";
-import { useParams, useSearchParams } from "next/navigation";
 import {
+  PRODUCTS,
   findProduct,
   formatYen,
   minOnlinePrice,
@@ -17,14 +14,26 @@ import {
   shippingNoteOf,
 } from "../../_mock/products";
 
-function ProductDetailContent() {
-  const { id } = useParams<{ id: string }>();
-  const searchParams = useSearchParams();
+type PageProps = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string | string[] }>;
+};
+
+function firstQueryParam(value?: string | string[]): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export function generateStaticParams() {
+  return PRODUCTS.map((product) => ({ id: product.id }));
+}
+
+export default async function ProductDetailPage({ params, searchParams }: PageProps) {
+  const { id } = await params;
+  const from = firstQueryParam((await searchParams).from);
   const product = findProduct(id);
 
   // RV-02: おすすめ診断から来た場合は診断結果へ戻れるようにする（サイト内パスのみ許可）
-  const from = searchParams.get("from");
-  const fromRecommend = from !== null && from.startsWith("/prototype/recommend");
+  const fromRecommend = typeof from === "string" && from.startsWith("/prototype/recommend");
 
   if (!product) {
     return (
@@ -188,13 +197,5 @@ function ProductDetailContent() {
         )}
       </section>
     </div>
-  );
-}
-
-export default function ProductDetailPage() {
-  return (
-    <Suspense fallback={<p className="text-center py-16 text-slate-500">読み込み中…</p>}>
-      <ProductDetailContent />
-    </Suspense>
   );
 }

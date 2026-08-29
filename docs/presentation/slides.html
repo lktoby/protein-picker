@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>プロテインえらび — 何を考えて、どう決めたのか</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css" id="theme">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* onboarding/slides.html と同じブランド配色・書体をそのまま使う */
+    :root {
+      --brand:        #15243B;
+      --brand-light:  #0FA277;
+      --brand-deep:   #0A6B50;
+      --accent:       #E8922A;
+      --accent-deep:  #A86312;
+      --ink:          #15243B;
+      --soft:         #3B4B64;
+      --muted:        #6E7B92;
+      --paper:        #F5F7F9;
+      --panel:        #EDF0F4;
+      --panel-tint:   #E4F5EE;
+      --line:         rgba(21,36,59,0.12);
+      --display:      'Outfit', 'Zen Kaku Gothic New', "Hiragino Sans", "Yu Gothic", sans-serif;
+      --body:         'Outfit', 'Zen Kaku Gothic New', "Hiragino Sans", "Yu Gothic", sans-serif;
+    }
+
+    .reveal {
+      font-family: var(--body);
+      color: var(--ink);
+      font-size: 30px;
+      font-feature-settings: "palt" 1;
+      -webkit-font-smoothing: antialiased;
+    }
+    .reveal .slides { text-align: left; }
+
+    .reveal h1 { font-family: var(--display); color: var(--brand); font-size: 1.7em; font-weight: 700; letter-spacing: .01em; line-height: 1.24; }
+    .reveal h2 {
+      font-family: var(--display); color: var(--brand); font-size: 1.15em; font-weight: 700;
+      border-left: 6px solid var(--brand-light);
+      padding: .1em 0 .1em .5em; margin-bottom: .7em; letter-spacing: .01em;
+    }
+    .reveal h3 { font-family: var(--display); color: var(--brand); font-size: .85em; font-weight: 700; margin-bottom: .3em; }
+
+    .reveal strong { color: var(--brand-deep); font-weight: 700; }
+    .reveal em { color: var(--brand-light); font-style: normal; font-weight: 700; }
+
+    #cover { text-align: center; }
+    #cover .lead { color: var(--soft); font-size: .62em; line-height: 1.9; margin-top: 1em; }
+    #cover .kicker {
+      font-family: var(--display);
+      display: inline-block; margin-bottom: 1.2em; padding: .3em 1.1em;
+      background: var(--brand-light); color: #fff; border-radius: 999px;
+      font-size: .5em; font-weight: 600; letter-spacing: .14em;
+    }
+    #cover .tag { color: var(--brand-deep); font-weight: 500; }
+
+    .reveal ul { margin-left: .2em; }
+    .reveal ul li { margin: .35em 0; line-height: 1.5; }
+    .reveal ul ul li { font-size: .82em; color: var(--muted); }
+
+    .reveal ol { margin-left: .8em; }
+    .reveal ol li { margin: .3em 0; line-height: 1.5; }
+
+    .reveal table { font-size: .74em; border-collapse: collapse; width: 100%; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 0 var(--line); }
+    .reveal table th {
+      background: var(--brand); color: #fff; font-weight: 600; font-family: var(--display);
+      padding: .55em .7em; border: none; text-align: left;
+    }
+    .reveal table td { padding: .5em .7em; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .reveal table tbody tr:nth-child(even) td { background: #FAFBFC; }
+    .reveal table .hl td { background: var(--panel-tint); }
+    .reveal table code { background: var(--panel); color: var(--brand-deep); padding: .1em .4em; border-radius: 5px; font-size: .9em; }
+
+    .reveal .flow {
+      display: flex; align-items: center; gap: .5em; flex-wrap: wrap;
+      font-size: .7em; font-weight: 600; font-family: var(--display); margin: .5em 0 .3em;
+    }
+    .reveal .flow .step {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 999px;
+      padding: .35em .8em; color: var(--brand);
+    }
+    .reveal .flow .step.gate { background: var(--panel-tint); border-color: #bfe6d6; color: var(--brand-deep); }
+    .reveal .flow .arrow { color: var(--accent); }
+
+    .reveal .small { font-size: .62em; color: var(--muted); }
+    .reveal .lead-line { font-size: .84em; line-height: 1.7; margin-bottom: .4em; }
+
+    .badge { display:inline-block; padding:.05em .6em; border-radius:999px; font-size:.85em; font-weight:600; font-family: var(--display); }
+    .badge.human { background:#FBEDD9; color:var(--accent-deep); }
+    .badge.ai { background:var(--panel-tint); color:var(--brand-deep); }
+
+    .reveal .center-strong { margin-top: .7em; text-align: center; font-size: .82em; font-weight: 700; color: var(--brand); }
+    .reveal code { font-family: 'Outfit', ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .reveal .progress { color: var(--brand-light); }
+    .reveal .slide-number { background: transparent; color: var(--muted); }
+
+    /* 2 カラム（Before / After の対比に使う） */
+    .cols { display: flex; gap: 1em; }
+    .cols > div { flex: 1; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: .6em .8em; }
+    .cols > div.after { background: var(--panel-tint); border-color: #bfe6d6; }
+    .cols h3 { font-size: .7em; margin: 0 0 .3em; }
+    .cols p { font-size: .62em; line-height: 1.55; margin: 0; color: var(--soft); }
+
+    /* 数字を並べるカード */
+    .stats { display: flex; gap: .8em; margin-top: .5em; }
+    .stats > div { flex: 1; text-align: center; background: var(--panel); border-radius: 12px; padding: .5em .3em; }
+    .stats .n { font-family: var(--display); font-size: 1.15em; font-weight: 700; color: var(--brand-deep); display: block; line-height: 1.2; }
+    .stats .l { font-size: .52em; color: var(--muted); }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 1. 表紙 -->
+    <section id="cover">
+      <h1>プロテインえらび</h1>
+      <p class="lead">
+        プロテイン初心者が、<span class="tag">迷わず選んで買える</span>比較・購入アプリ<br>
+        —— 何を考えて、どう決めたのか
+      </p>
+      <p class="small" style="margin-top:1.6em;"> 発表者: toby（トビー） ・ 2026年8月28日 </p>
+      <aside class="notes">
+        今日は技術の話より「どう判断したか」を中心に話します。5分で、作ったもの・課題・デモ・判断・学びの順です。
+      </aside>
+    </section>
+
+    <!-- 2. 何を作ったか -->
+    <section>
+      <h2>1. 何を作ったか</h2>
+      <p class="lead-line">
+        一言でいうと ——<br>
+        <em>3つの質問に答えるだけで、自分に合ったプロテインが「理由つき」で分かり、送料込みの価格で比べて、そのまま買えるアプリ</em>です。
+      </p>
+      <div class="flow">
+        <span class="step gate">3問に答える</span><span class="arrow">→</span>
+        <span class="step">おすすめを理由つきで見る</span><span class="arrow">→</span>
+        <span class="step">送料込みで比べる</span><span class="arrow">→</span>
+        <span class="step">アプリ内で買う</span><span class="arrow">→</span>
+        <span class="step">お届け状況・問い合わせ</span>
+      </div>
+      <p class="small">※ 個人情報は一切扱わないモックアプリ。決済・配送・外部 EC 連携はしません。</p>
+      <!-- <div class="stats">
+        <div><span class="n">9</span><span class="l">ユーザーストーリー</span></div>
+        <div><span class="n">10</span><span class="l">機能（F-01〜F-10）</span></div>
+        <div><span class="n">7</span><span class="l">画面</span></div>
+        <div><span class="n">138</span><span class="l">単体テスト（全パス）</span></div>
+      </div> -->
+      <aside class="notes">
+        「比較サイト」ではなく「初心者が選べる」ことに寄せたのがポイント。数字は結果なので、さらっと。
+      </aside>
+    </section>
+
+    <!-- 3. 課題（Why） -->
+    <section>
+      <h2>2. 課題（Why）</h2>
+      <p class="lead-line">
+        プロテインは <strong>種類も機能も多すぎて、買う前に調べないといけない知識が多い。</strong><br>
+        初心者は「ホエイ？WPI？カゼイン？」でつまずいて、選ぶ前に離脱する。
+      </p>
+      <ul>
+        <li>使う場面は <em>「買うか悩んでいる、その瞬間」</em> のスポット利用</li>
+        <li>だから <strong>「調べさせない」</strong> ことがこのアプリの価値
+          <ul><li>知識を前提にせず、<strong>目的・タイミング・こだわり</strong>という「自分の状況」だけを聞く</li></ul>
+        </li>
+        <li>比較の物差しは <em>1g あたりの価格</em> に統一
+          <ul><li>容量が 700g〜3kg までバラバラなので、総額だけでは公平に比べられない</li></ul>
+        </li>
+      </ul>
+      <aside class="notes">
+        課題は「情報が無い」ではなく「知識が要りすぎる」。だから機能ではなく“質問の設計”が本質、という流れで話す。
+      </aside>
+    </section>
+
+    <!-- 4. デモ -->
+    <section>
+      <h2>3. デモ</h2>
+      <!-- <p class="lead-line">この順で動かします。<strong>見てほしいのは 3 点</strong>です。</p>
+      <ol>
+        <li><strong>おすすめ診断</strong> — 3問選ぶ →「おすすめ 1 位」が<em>理由つき</em>で出る
+          <ul><li>👀 <strong>✓チップと 1 行の理由</strong>＝なぜ推されたかが分かる</li></ul>
+        </li>
+        <li><strong>商品詳細</strong> — ショップを安い順に並べ、最安に「最安」バッジ
+          <ul><li>👀 <strong>「商品 3,280円 + 送料 500円」</strong>＝送料の内訳まで見える</li></ul>
+        </li>
+        <li><strong>購入 → 注文履歴</strong> — ダミー決済 →「注文済み」バッジ
+          <ul><li>👀 <strong>お届け状況</strong>（注文済み／お届け中／お届け済み）</li></ul>
+        </li>
+        <li>おまけ：<strong>ダークモード切替</strong>と<strong>用語説明ページ</strong></li>
+      </ol>
+      <p class="small">起動: <code>docker compose up --build</code> → 初回のみ <code>npm run db:setup</code> → http://localhost:3000</p>
+      <aside class="notes">
+        デモは2分以内。1位が「コスパホエイ」になる条件（筋肉・運動後・価格の安さ重視）で見せると、価格重視の採点が効いていることが伝わる。
+      </aside> -->
+    </section>
+
+    <!-- 5. How ① 同じ指摘が3回 -->
+    <section>
+      <h2>4-① 同じ指摘を3回もらって、仕組みで直した</h2>
+      <p class="lead-line">送料の見せ方だけで、レビュー指摘が <strong>3 回続いた</strong>。</p>
+      <table>
+        <thead><tr><th>指摘</th><th>言われたこと</th><th>私の対応</th></tr></thead>
+        <tbody>
+          <tr><td>RV-01</td><td>送料が未定義だと価格比較が成立しない</td><td>「送料込み」に統一</td></tr>
+          <tr><td>RV-16</td><td>「送料込み」だけでは内訳が分からない</td><td>詳細に内訳を追加</td></tr>
+          <tr class="hl"><td>RV-18</td><td>おすすめカードにも書いて。表記も統一して</td><td><strong>表示ルールを 1 つの部品に閉じ込めた</strong></td></tr>
+        </tbody>
+      </table>
+      <p class="lead-line" style="margin-top:.5em;">
+        3 回目で気づいたのは「<em>また書き忘れる</em>」という自分の癖。<br>
+        個々の画面を直すのをやめ、<strong>価格表示を 1 か所（部品）に集約</strong>して、書き忘れが起きない構造にしました。
+      </p>
+      <aside class="notes">
+        ここが一番伝えたい判断。「指摘を直す」→「指摘が再発しない形にする」への切り替え。部品名は言わなくていい。
+      </aside>
+    </section>
+
+    <!-- 6. How ② 指摘の分類 -->
+    <section>
+      <h2>4-② 指摘は「分類」を間違えないほうが大事だった</h2>
+      <p class="lead-line">レビュー指摘 <strong>18 件</strong>。全部を同じように扱わず、行き先を分けました。</p>
+      <table>
+        <thead><tr><th>分類</th><th>件数</th><th>代表例と判断</th></tr></thead>
+        <tbody>
+          <tr><td>UI/UX（実装で踏襲）</td><td>15</td><td>デモに反映して仕様書に残す</td></tr>
+          <tr class="hl"><td><strong>要件の漏れ</strong></td><td>1</td><td>RV-17「お届け状況を出したい」→ 表示位置の話ではなく<strong>新しい情報</strong>。要件に戻して<span class="badge human">再承認</span></td></tr>
+          <tr class="hl"><td><strong>対応しない</strong></td><td>1</td><td>RV-03「購入前に確認ステップを」→ <strong>購入画面で確認できるので冗長</strong>と判断し見送り</td></tr>
+          <tr><td>実装への申し送り</td><td>1</td><td>RV-07 不正パラメータ・二重送信のガード</td></tr>
+        </tbody>
+      </table>
+      <p class="lead-line" style="margin-top:.5em;">
+        「お届け状況」を <em>UI の話として実装で辻褄を合わせなかった</em> のが、今回いちばん効いた判断だと思います。
+      </p>
+      <aside class="notes">
+        RV-17は自分で「これはUIじゃなく要件だ」と気づいて要件に戻した話。RV-03は「全部言われた通りにしない」判断。両方セットで話す。
+      </aside>
+    </section>
+
+    <!-- 7. How ③ 判断を変えた -->
+    <section>
+      <h2>4-③ 自分の判断を 2 回、覆した</h2>
+      <div class="cols">
+        <div>
+          <h3>当初の判断</h3>
+          <p><strong>コンポーネントライブラリは入れない</strong><br>「部品は少ないし自分で書ける」</p>
+          <p style="margin-top:.5em;"><strong>配色は白 × 緑</strong><br>健康っぽいから</p>
+        </div>
+        <div class="after">
+          <h3>測ってから変えた判断</h3>
+          <p><strong>ライブラリを導入</strong><br>コードを数えたら、同じボタンが <em>12 箇所</em>・同じカード枠が <em>18 箇所</em> 手書きで重複。レビューしにくい原因はここだった</p>
+          <p style="margin-top:.5em;"><strong>モノクロに変更</strong><br>緑は<em>この分野の既定色</em>で、大人っぽくて穏やかなイメージを与えたいから。色を持つのは<strong>商品写真だけ</strong></p>
+        </div>
+      </div>
+      <p class="lead-line" style="margin-top:.6em;">
+        どちらも <strong>「数えたら / 測ったら」議論が決着</strong> しました。<br>
+      </p>
+      <aside class="notes">
+        「印象で議論せず、数えて決めた」が要点。配色は“根拠がなかったことを認めた”ことも正直に言う。
+      </aside>
+    </section>
+
+    <!-- 8. How ④ 画面設計のこだわり -->
+    <section>
+      <h2>4-④ 画面設計でこだわった点</h2>
+      <ul>
+        <li><strong>おすすめの理由を必ず見せる</strong>
+          <ul><li>順位だけ出すとブラックボックス。<em>✓ 一致した条件</em>と<em>1 行の理由</em>を必ず添えた</li></ul>
+        </li>
+        <li><strong>「価格の安さ重視なのに高い商品が上位」を直した</strong>
+          <ul><li>タグの有無で加点していたのを、<em>実際の 1g あたり価格と総額</em>で採点する方式に変更（RV-09）</li></ul>
+        </li>
+        <li><strong>診断のやり直しを強制しない</strong>
+          <ul><li>条件を URL に持たせ、商品詳細から戻っても<em>3 問やり直しにならない</em>（RV-02）</li></ul>
+        </li>
+        <li><strong>見た目と動きを一致させる</strong>
+          <ul><li>条件を変えたら古い結果を薄くするだけでなく、<em>押せないように</em>した（RV-13）</li></ul>
+        </li>
+        <li><strong>モノクロ化が、結果的にアクセシビリティを上げた</strong>
+          <ul><li>お届け状況を色ではなく<em>塗りの強さ＋アイコン＋文字</em>で区別 → 色覚特性のある人にも伝わる</li></ul>
+        </li>
+      </ul>
+      <aside class="notes">
+        時間が無ければ上2つだけ話す。最後のモノクロ×アクセシビリティは「制約が品質を上げた」良い例。
+      </aside>
+    </section>
+
+    <!-- 9. 学び -->
+    <section>
+      <h2>5. 学び</h2>
+      <ul>
+        <li><strong>動く画面を見せないと出てこない指摘がある</strong>
+          <ul><li>送料の内訳・お届け状況は、要件定義の文書では一度も出てこなかった</li></ul>
+        </li>
+        <li><strong>AI は速いが、「何が正しいか」は決めてくれない</strong>
+          <ul><li>配色を「なぜ緑？」と聞かれて、<em>根拠を記録していなかった</em>ことに気づいた</li></ul>
+        </li>
+        <li><strong>質問を書き出して残すと、後から理由が辿れる</strong>
+          <ul><li>3 工程で <em>27 問</em>。「なぜこの仕様か」が全部ドキュメントに残った</li></ul>
+        </li>
+        <li><strong>言われた通りに全部やる、が正解ではない</strong>
+          <ul><li>断る判断（RV-03）にも理由を書いて残す</li></ul>
+        </li>
+        <li>今後に向けて：<em>正解を定義する側</em>の仕事に時間を使いたい
+          <ul><li>実装の速さより、要件の解像度と「測って決める」習慣のほうが効く</li></ul>
+        </li>
+      </ul>
+      <aside class="notes">
+        自分の今後への影響として「正解を定義する側にまわる」で締める。
+      </aside>
+    </section>
+
+    <!-- 10. まとめ -->
+    <section data-background-color="#15243B">
+      <h2 style="color:#fff; border-left-color:#0FA277;">まとめ</h2>
+      <ul style="color:#DCE3EC;">
+        <li>作ったもの：<strong style="color:#5FD3AC;">初心者が「調べずに」選べるプロテイン比較・購入アプリ</strong></li>
+        <li>効いた判断：
+          <ul style="color:#AEBED2;">
+            <li>同じ指摘の 3 回目で、<span style="color:#fff;font-weight:700;">直す→再発しない構造にする</span>へ切り替えた</li>
+            <li>指摘の <span style="color:#fff;font-weight:700;">分類</span> を間違えず、要件に戻すべきものは戻した</li>
+            <li><span style="color:#fff;font-weight:700;">数えて・測って</span>、自分の判断を 2 回覆した</li>
+          </ul>
+        </li>
+        <li>学び：<strong style="color:#F4B25E;">AI は答えを出すが、正解を決めるのは自分</strong></li>
+      </ul>
+      <p class="small" style="color:#8FA0B8; margin-top:1em;">詳細は <code>docs/</code> — 要件・UI/UX 仕様・設計・実装メモに全判断を記録しています。</p>
+      <aside class="notes">
+        ここで質問を受ける。深掘りされたら docs/02-prototype/review-feedback.md（18件の判断表）を画面で見せると早い。
+      </aside>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'slide',
+    width: 1280,
+    height: 720,
+    margin: 0.06,
+    plugins: [ RevealHighlight, RevealNotes ],
+  });
+</script>
+</body>
+</html>
